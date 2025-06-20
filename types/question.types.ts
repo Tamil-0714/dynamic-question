@@ -1,4 +1,5 @@
-import type { Types } from "mongoose"
+// Remove the mongoose import since it's not available in the browser
+// import type { Types } from "mongoose";
 
 export enum EQuestionCriteria {
   EXACT = "exact",
@@ -63,9 +64,10 @@ export type ICorrectAnswer =
   | ICorrectAnswerMCQMultiple
   | ICorrectAnswerText
 
+// For the frontend, we'll use string IDs instead of MongoDB ObjectIds
 export interface IQuestion {
-  _id: Types.ObjectId
-  jobId: Types.ObjectId
+  _id: string
+  jobId: string
   text: string
   criteria: EQuestionCriteria
   correctAnswer: ICorrectAnswer
