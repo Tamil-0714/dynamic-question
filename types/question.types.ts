@@ -1,0 +1,76 @@
+import type { Types } from "mongoose"
+
+export enum EQuestionCriteria {
+  EXACT = "exact",
+  GREATER_THAN = "greaterThan",
+  LESSER_THAN = "lesserThan",
+  RANGE = "range",
+  INCLUDES = "includes", // in case of multi-select in MCQ type question
+  EXCLUDES = "excludes", // in case of 4 option only one is wrong other 3 are correct
+  CONTAINS = "contains", // for text matching with specific keywords
+  MANUAL_REVIEW = "manualReview", // For subjective questions
+}
+
+export enum ECorrectAnswerType {
+  NUMBER = "number",
+  RANGE = "range",
+  YES_NO = "yesNo",
+  MCQ_SINGLE = "mcqSingle",
+  MCQ_MULTIPLE = "mcqMultiple",
+  TEXT = "text",
+}
+
+export interface ICorrectAnswerBase {
+  type: ECorrectAnswerType
+  value: any
+}
+
+export interface ICorrectAnswerNumber extends ICorrectAnswerBase {
+  type: ECorrectAnswerType.NUMBER
+  value: number
+}
+
+export interface ICorrectAnswerRange extends ICorrectAnswerBase {
+  type: ECorrectAnswerType.RANGE
+  value: [number, number]
+}
+
+export interface ICorrectAnswerYesNo extends ICorrectAnswerBase {
+  type: ECorrectAnswerType.YES_NO
+  value: "yes" | "no"
+}
+
+export interface ICorrectAnswerMCQSingle extends ICorrectAnswerBase {
+  type: ECorrectAnswerType.MCQ_SINGLE
+  value: string
+}
+
+export interface ICorrectAnswerMCQMultiple extends ICorrectAnswerBase {
+  type: ECorrectAnswerType.MCQ_MULTIPLE
+  value: string[]
+}
+
+export interface ICorrectAnswerText extends ICorrectAnswerBase {
+  type: ECorrectAnswerType.TEXT
+  value: string
+}
+
+export type ICorrectAnswer =
+  | ICorrectAnswerNumber
+  | ICorrectAnswerRange
+  | ICorrectAnswerYesNo
+  | ICorrectAnswerMCQSingle
+  | ICorrectAnswerMCQMultiple
+  | ICorrectAnswerText
+
+export interface IQuestion {
+  _id: Types.ObjectId
+  jobId: Types.ObjectId
+  text: string
+  criteria: EQuestionCriteria
+  correctAnswer: ICorrectAnswer
+  options?: string[] // only for MCQ type
+  metadata: string
+  createdAt: Date
+  updatedAt: Date
+}
