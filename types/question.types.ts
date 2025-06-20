@@ -1,15 +1,12 @@
-// Remove the mongoose import since it's not available in the browser
-// import type { Types } from "mongoose";
-
 export enum EQuestionCriteria {
   EXACT = "exact",
   GREATER_THAN = "greaterThan",
   LESSER_THAN = "lesserThan",
   RANGE = "range",
-  INCLUDES = "includes", // in case of multi-select in MCQ type question
-  EXCLUDES = "excludes", // in case of 4 option only one is wrong other 3 are correct
-  CONTAINS = "contains", // for text matching with specific keywords
-  MANUAL_REVIEW = "manualReview", // For subjective questions
+  INCLUDES = "includes",
+  EXCLUDES = "excludes",
+  CONTAINS = "contains",
+  MANUAL_REVIEW = "manualReview",
 }
 
 export enum ECorrectAnswerType {
@@ -21,40 +18,18 @@ export enum ECorrectAnswerType {
   TEXT = "text",
 }
 
-export interface ICorrectAnswerBase {
-  type: ECorrectAnswerType
-  value: any
+/* ---------- shared answer union ---------- */
+export interface ICorrectAnswerBase<T extends ECorrectAnswerType = ECorrectAnswerType, V = unknown> {
+  type: T
+  value: V
 }
 
-export interface ICorrectAnswerNumber extends ICorrectAnswerBase {
-  type: ECorrectAnswerType.NUMBER
-  value: number
-}
-
-export interface ICorrectAnswerRange extends ICorrectAnswerBase {
-  type: ECorrectAnswerType.RANGE
-  value: [number, number]
-}
-
-export interface ICorrectAnswerYesNo extends ICorrectAnswerBase {
-  type: ECorrectAnswerType.YES_NO
-  value: "yes" | "no"
-}
-
-export interface ICorrectAnswerMCQSingle extends ICorrectAnswerBase {
-  type: ECorrectAnswerType.MCQ_SINGLE
-  value: string
-}
-
-export interface ICorrectAnswerMCQMultiple extends ICorrectAnswerBase {
-  type: ECorrectAnswerType.MCQ_MULTIPLE
-  value: string[]
-}
-
-export interface ICorrectAnswerText extends ICorrectAnswerBase {
-  type: ECorrectAnswerType.TEXT
-  value: string
-}
+export type ICorrectAnswerNumber = ICorrectAnswerBase<ECorrectAnswerType.NUMBER, number>
+export type ICorrectAnswerRange = ICorrectAnswerBase<ECorrectAnswerType.RANGE, [number, number]>
+export type ICorrectAnswerYesNo = ICorrectAnswerBase<ECorrectAnswerType.YES_NO, "yes" | "no">
+export type ICorrectAnswerMCQSingle = ICorrectAnswerBase<ECorrectAnswerType.MCQ_SINGLE, string>
+export type ICorrectAnswerMCQMultiple = ICorrectAnswerBase<ECorrectAnswerType.MCQ_MULTIPLE, string[]>
+export type ICorrectAnswerText = ICorrectAnswerBase<ECorrectAnswerType.TEXT, string>
 
 export type ICorrectAnswer =
   | ICorrectAnswerNumber
@@ -64,14 +39,14 @@ export type ICorrectAnswer =
   | ICorrectAnswerMCQMultiple
   | ICorrectAnswerText
 
-// For the frontend, we'll use string IDs instead of MongoDB ObjectIds
+/* ---------- question shape used on the client ---------- */
 export interface IQuestion {
   _id: string
   jobId: string
   text: string
   criteria: EQuestionCriteria
   correctAnswer: ICorrectAnswer
-  options?: string[] // only for MCQ type
+  options?: string[]
   metadata: string
   createdAt: Date
   updatedAt: Date
